@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from ..core.config import get_settings
 from ..models.request import Base64FileRequest, CategoryInput
 from ..models.response import StatementAnalysisResponse
+from ..services.content_validator import validate_statement_content
 from ..services.csv_extractor import CSVExtractor
 from ..services.llm_parser import LLMParser
 from ..services.pdf_extractor import PDFExtractor
@@ -79,6 +80,11 @@ def _run_analysis(
         else:
             extracted = pdf_extractor.extract(file_bytes)
             formatted = pdf_extractor.format_for_llm(extracted)
+
+        valid, reason = validate_statement_content(formatted)
+        if not valid:
+            raise HTTPException(status_code=422, detail=f"Invalid statement: {reason}")
+
         return parser.parse(formatted, bank_name, start_date, end_date, categories)
     except HTTPException:
         raise

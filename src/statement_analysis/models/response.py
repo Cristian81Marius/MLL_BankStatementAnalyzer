@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 class Transaction(BaseModel):
     amount: Decimal = Field(..., gt=0, description="Always positive, regardless of type")
     description: str = Field(..., min_length=1)
+    clean_description: str = Field(..., min_length=1, max_length=30)
     category_id: int
     category_name: str
     date: date

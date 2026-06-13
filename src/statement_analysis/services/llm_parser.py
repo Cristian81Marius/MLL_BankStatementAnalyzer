@@ -27,8 +27,10 @@ RULES:
 2. Amount must ALWAYS be a positive number (absolute value).
 3. Dates → ISO YYYY-MM-DD. If year is ambiguous use the most recent plausible year.
 4. For category_id, use ONLY the IDs from the list above. Pick the most fitting one.
-5. Statement may be in any language — keep original description text as-is.
+5. Statement may be in any language — keep original description text as-is in "description".
 6. Do not skip transactions out of uncertainty — make your best inference.
+7. clean_description: a short human-readable label for the transaction (e.g. "Netflix Subscription",
+   "Amazon Purchase", "Salary Deposit"). Max 30 characters. No codes, no reference numbers.
 
 OUTPUT — strict JSON, no markdown fences:
 {{
@@ -36,7 +38,8 @@ OUTPUT — strict JSON, no markdown fences:
     {{
       "date": "YYYY-MM-DD",
       "amount": 123.45,
-      "description": "Original description text",
+      "description": "Original raw text from statement",
+      "clean_description": "Human readable label",
       "category_id": 8
     }}
   ],
@@ -209,6 +212,10 @@ class LLMParser:
                 return None
 
             description = str(tx_dict.get("description", "")).strip() or "Unknown"
+            clean_description = str(tx_dict.get("clean_description", "")).strip()
+            if not clean_description:
+                clean_description = description[:30]
+            clean_description = clean_description[:30]
 
             category_id = int(tx_dict.get("category_id", -1))
             cat = categories_map.get(category_id)
@@ -221,6 +228,7 @@ class LLMParser:
             return Transaction(
                 amount=amount,
                 description=description,
+                clean_description=clean_description,
                 category_id=cat.id,
                 category_name=cat.name,
                 date=parsed_date,
