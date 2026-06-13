@@ -1,0 +1,48 @@
+# ── Virtual environment ───────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+
+# ── Secrets & local config ────────────────────────────────────────────────────
+.env
+*.env.local
+*.env.production
+
+# ── Python cache / build artifacts ───────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# ── Test artifacts ────────────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# ── Real bank statement files (sensitive — never commit) ──────────────────────
+tests/data/sample_pdfs/*.pdf
+tests/data/sample_pdfs/*.csv
+tests/data/sample_pdfs/*.xlsx
+
+# ── IDE ───────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# ── OS ────────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Claude Code ───────────────────────────────────────────────────────────────
+.claude/
